@@ -1,0 +1,81 @@
+Alu Control-i
+
+module ALUControl(
+    input [1:0] ALUOp,
+    input [1:0] funct,
+    input [3:0] OPCODE,
+    output reg [3:0] ALUCtrl
+);
+
+  always @(ALUOp or funct or OPCODE)
+begin
+    case(ALUOp)
+        2'b00: ALUCtrl = 4'b0010; // LW+SW (mbledhje)
+        2'b01: ALUCtrl = 4'b0110; // BEQ+BNE (zbritje)
+        2'b10: // R-Format
+            case(OPCODE)
+
+                4'b0000:
+                    case(funct)
+                        2'b00: ALUCtrl = 4'b0000;  //AND
+                        2'b01: ALUCtrl = 4'b0010;  //OR
+                        2'b10: ALUCtrl = 4'b0011;  //XOR
+                    endcase
+                4'b0001:
+                    case(funct)
+                        2'b00: ALUCtrl = 4'b0100;  //ADD
+                        2'b01: ALUCtrl = 4'b1100;  //SUB
+                    endcase
+                4'b0010:
+                    case(funct)
+                        2'b00: ALUCtrl = 4'b0110;  //SLL
+                        2'b01: ALUCtrl = 4'b0111;  //SRA
+                    endcase
+            endcase
+
+        2'b11: // I-Format
+            case(OPCODE)
+                4'b1001: ALUCtrl = 4'b0101; // ADDI
+                4'b1010: ALUCtrl = 4'b1101; //SUBI
+                4'b1011: ALUCtrl = 4'b0001; //SLTI
+            endcase
+    endcase
+end
+endmodule
+
+
+
+Testimi:
+
+module ALUControl_testim;
+  
+  reg [1:0]ALUOp_test;
+  reg [1:0]funct_test;
+  reg [3:0]OPCODE_test;
+  wire [3:0] ALUCtrl_test;
+  
+  initial
+    $monitor("ALUOp=%b, funct=%b, OPCODE=%b, ALUCtrl=%b", ALUOp_test, funct_test, OPCODE_test, ALUCtrl_test);
+  
+  initial
+  begin
+    //instancimi i regjistrave(tela) testimi i ALUs
+  	#0	ALUOp_test=2'b00; funct_test=2'b00; OPCODE_test=4'b0000;
+    //mbledhje
+    #10	ALUOp_test=2'b01; funct_test=2'b01; OPCODE_test=4'b0000;
+    //zbritje
+  	#10	ALUOp_test=2'b11; funct_test=2'b01; OPCODE_test=4'b1011;
+    //i-format [or]
+    #10	ALUOp_test=2'b11; funct_test=2'b01; OPCODE_test=4'b1001;
+    //i-format [xor]
+    #10	ALUOp_test=2'b11; funct_test=2'b01; OPCODE_test=4'b1010;
+    //i-format [add]
+    #10	ALUOp_test=2'b10; funct_test=2'b01; OPCODE_test=4'b0000;
+    //r-format
+    #10	ALUOp_test=2'b10; funct_test=2'b01; OPCODE_test=4'b0001;
+    //r-format
+    #10 $stop;
+  end
+  
+  ALUControl ALUControl_test(.ALUOp(ALUOp_test), .funct(funct_test), .OPCODE(OPCODE_test), .ALUCtrl(ALUCtrl_test));
+	endmodule

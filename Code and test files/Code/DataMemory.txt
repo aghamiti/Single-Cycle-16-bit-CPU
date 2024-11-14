@@ -1,0 +1,189 @@
+DataMemory
+
+module DataMemory(
+input wire[15:0] Address,
+input wire[15:0] WriteData,
+input wire MemWrite,
+input wire MemRead,
+input wire Clock,
+output wire[15:0] ReadData
+);
+
+reg[7:0] dataMem[0:127];
+
+initial
+$readmemb("dataMemory.mem", dataMem);
+
+always@(posedge Clock)
+begin
+    if(MemWrite) 
+        begin
+            
+            dataMem[Address + 16'd0] <= WriteData[15:8];
+            dataMem[Address + 16'd1] <= WriteData[7:0];
+           end
+end
+
+always@(negedge Clock)
+begin
+$writememb("dataMemory.mem", dataMem);
+end
+ assign ReadData[15:8] = dataMem[Address + 16'd0];
+ assign ReadData[7:0] = dataMem[Address + 16'd1];
+
+endmodule
+
+Testimi:
+
+module DataMemory_testim;
+  reg[15:0] Address_test;
+  reg[15:0] WriteData_test;
+  reg MemWrite_test;
+  reg MemRead_test;
+  reg Clock_test;
+  wire [15:0] ReadData_test;
+  
+  initial
+    begin
+      #0 Clock_test=1'b0;
+      #10 MemWrite_test=1'b1; Address_test=16'd1; WriteData_test=16'd8; MemRead_test=1'b0;
+      #10 Clock_test=1'b1;
+      #10 Clock_test=1'b0; MemWrite_test=1'b1;
+      #10 MemRead_test=1'b1; Address_test=16'd1;
+    end
+  
+  DataMemory DMT(.Address(Address_test), .WriteData(WriteData_test), .MemWrite(MemWrite_test), .MemRead(MemRead_test), .Clock(Clock_test), .ReadData(ReadData_test));
+  
+endmodule
+
+
+.mem-i:
+
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000
+0000_0000

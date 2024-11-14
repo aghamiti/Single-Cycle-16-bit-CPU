@@ -1,0 +1,91 @@
+RegisterFile
+
+module RegisterFile(
+input wire[1:0] RS,
+input wire[1:0] RT,
+input wire[1:0] RD,
+input wire[15:0] WriteData,
+input wire RegWrite,
+input wire Clock,
+output wire[15:0] ReadRS,
+output wire[15:0] ReadRT
+);
+    
+reg[15:0] Registers[3:0];
+
+//Reseto te gjithe regjistrat ne 0
+integer i;
+initial 
+begin
+for(i=0;i<4;i=i+1)
+   Registers[i] <= 16'b0; 
+end
+
+//Shkruaj ne regjiter
+always @(posedge Clock)
+begin
+Registers[RD] <= WriteData;
+end
+
+//lexo regjistrat ReadData1, ReadData2
+assign ReadRS = Registers[RS];
+assign ReadRT = Registers[RT];
+
+endmodule
+
+
+Testimi:
+
+module RegisterFile_testim;
+  
+  reg [1:0] RS_test;
+  reg [1:0] RT_test;
+  reg [1:0] RD_test;
+  reg [15:0] WriteData_test;
+  reg  RegWrite_test;
+  reg  Clock_test;
+  
+  wire[15:0] ReadRS_test;
+  wire[15:0] ReadRT_test;
+  
+  initial
+       $monitor("RS = %b, RT = %b, RD = %b, WriteData = %b, RegWrite = %b, Clock = %b, Read_RS = %b, Read_RT = %b", RS_test, RT_test, RD_test, WriteData_test, RegWrite_test, Clock_test, ReadRS_test, ReadRT_test);
+
+  
+  initial
+    begin
+      #0	Clock_test=1'b0;
+      
+      #10	RD_test=2'b11; 	WriteData_test=16'd5; RegWrite_test=1'b1;
+      
+      #10	Clock_test=1'b1;
+      
+      #10	Clock_test=1'b0; RegWrite_test=1'b1;
+      
+      #10   RD_test=2'b10; WriteData_test=16'd3;
+      
+      #10	Clock_test=1'b1;
+      
+      #10	Clock_test=1'b0; RegWrite_test=1'b1;
+      
+      #10	Clock_test=1'b1;
+      
+      #10	RS_test=2'b11; RT_test=2'b10;
+      
+      #10	$stop;
+      
+      
+    end
+  
+  RegisterFile RegisterFile_test(
+    .RS(RS_test),
+    .RT(RT_test),
+    .RD(RD_test),
+    .WriteData(WriteData_test),
+    .RegWrite(RegWrite_test),
+    .Clock(Clock_test),
+    .ReadRS(ReadRS_test),
+    .ReadRT(ReadRT_test)
+  );
+  
+endmodule
